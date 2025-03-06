@@ -10,8 +10,8 @@ import json
 # Initialise some of the session_state values for OpenAI
 # -----------------------------------------------
 
-json_path = os.path.join("visual_transcription", "utils", "chat_GPT.json")
-with open(json_path, "r") as json_file:
+if "gpt-4o" not in st.session_state:
+    with open(r"visual_transcription/utils/chat_GPT.json", "r") as json_file:
         gpt4o_into = json.load(json_file)
         st.session_state['gpt-4o'] = {"prompt": gpt4o_into["prompt"], "max_words": gpt4o_into["max_words"]}
         st.session_state['gpt-4o']["prompt"] = st.session_state['gpt-4o']["prompt"].replace("%MAX_WORDS%", gpt4o_into["max_words"])
