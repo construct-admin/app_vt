@@ -8,7 +8,7 @@ dotenv.load_dotenv()
 # Define an OpenAI configuration dictionary.
 # You can adjust the prompt, max_words, and other parameters as needed.
 OpenAI_config = {
-    "prompt": "Please analyze the visual content of the image. Ensure the description is concise and up to %MAX_WORDS% words.",
+    "prompt": "I am sending you an image. Please generate an accessibility description fo the image according to WCAG 2.2 AA accessibility standards..",
     "max_words": os.getenv("OPENAI_MAX_WORDS", "200"),  # default max words (can be overridden in a .env file)
     "selected_filters": [],
     "api_key": os.getenv("OPENAI_API_KEY")  # ensure your OpenAI API key is set in your environment
