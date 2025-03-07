@@ -29,7 +29,8 @@ def analyze_image_gpt4_resized(frame, prompt):
     1. Resize & compress the image.
     2. Send the base64-encoded result to GPT-4 as part of a conversation.
     """
-
+    # Set the system prompt
+    system_prompt = "You accept images to generate description or alt text according to WCAG 2.2 AA accessibility standards."
     # Step 1: Resize & compress
     image_base64 = preprocess_image_for_gpt4(
         frame, 
@@ -40,7 +41,8 @@ def analyze_image_gpt4_resized(frame, prompt):
 
     # Step 2: Prepare the conversation
     messages = [
-        {"role": "system", "content": prompt},
+        {"role":"system", "content": system_prompt}
+        {"role": "user", "content": prompt},
         {
             "role": "user",
             "content": (
