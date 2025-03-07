@@ -3,26 +3,34 @@ import requests
 import base64
 import numpy as np
 import cv2
+import streamlit as st
 
-def preprocess_image_for_gpt4(frame, new_width=512, new_height=512, jpeg_quality=50):
+def preprocess_image_for_gpt4(image_bytes, new_width=256, new_height=256, jpeg_quality=20):
     """
-    1. Resizes the frame to (new_width x new_height).
-    2. Compresses it as a JPEG with the specified jpeg_quality (0-100).
-    3. Returns the base64-encoded string of the compressed image.
+    1. Converts the uploaded image bytes to a NumPy array.
+    2. Decodes it with OpenCV.
+    3. Resizes it to (new_width x new_height) and compresses it as a JPEG with the specified quality.
+    4. Returns the base64-encoded string of the compressed image.
     """
-    # 1. Resize the image
+    # Convert image bytes to a NumPy array and decode
+    np_img = np.frombuffer(image_bytes, np.uint8)
+    frame = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
+    if frame is None:
+        raise ValueError("Could not decode image")
+    
+    # Resize the image
     resized = cv2.resize(frame, (new_width, new_height), interpolation=cv2.INTER_AREA)
     
-    # 2. Compress as JPEG
+    # Compress as JPEG with aggressive quality settings
     encode_params = [int(cv2.IMWRITE_JPEG_QUALITY), jpeg_quality]
     success, buffer = cv2.imencode('.jpg', resized, encode_params)
     if not success:
-        raise ValueError("Failed to encode image.")
-
-    # 3. Convert to base64
+        raise ValueError("Failed to encode image")
+    
+    # Convert to base64 string
     image_base64 = base64.b64encode(buffer).decode('utf-8')
-
     return image_base64
+
 
 def analyze_image_gpt4_resized(frame, prompt):
     """
@@ -32,12 +40,11 @@ def analyze_image_gpt4_resized(frame, prompt):
     # Set the system prompt
     system_prompt = "You accept images to generate description or alt text according to WCAG 2.2 AA accessibility standards."
     # Step 1: Resize & compress
-    image_base64 = preprocess_image_for_gpt4(
-        frame, 
-        new_width=256,       # Adjust as needed
-        new_height=256,      # Adjust as needed
-        jpeg_quality=20      # Adjust as needed
-    )
+    try:
+        image_base64 = preprocess_image_for_gpt4(image_bytes)
+    except Exception as e:
+        st.error(f"Error processing image: {e}")
+        return
 
     # Step 2: Prepare the conversation
     messages = [
