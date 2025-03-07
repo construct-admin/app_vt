@@ -31,32 +31,29 @@ def preprocess_image_for_gpt4(image_bytes, new_width=256, new_height=256, jpeg_q
     image_base64 = base64.b64encode(buffer).decode('utf-8')
     return image_base64
 
-
-def analyze_image_gpt4_resized(frame, prompt):
+def analyze_image_gpt4_resized(image_bytes, prompt):
     """
     1. Resize & compress the image.
     2. Send the base64-encoded result to GPT-4 as part of a conversation.
     """
     # Set the system prompt
     system_prompt = "You accept images to generate description or alt text according to WCAG 2.2 AA accessibility standards."
-    # Step 1: Resize & compress
+    
+    # Step 1: Resize & compress using the passed image_bytes
     try:
         image_base64 = preprocess_image_for_gpt4(image_bytes)
     except Exception as e:
         st.error(f"Error processing image: {e}")
-        return
+        return None
 
     # Step 2: Prepare the conversation
     messages = [
-        {"role":"system", "content": system_prompt},
+        {"role": "system", "content": system_prompt},
         {"role": "user", "content": prompt},
-        {
-            "role": "user",
-            "content": (
-                "Please analyze this compressed image data and provide me with a short visual transcript. Not more than 20 words:\n"
-                f"{image_base64}"
-            )
-        }
+        {"role": "user", "content": (
+            "Please analyze this compressed image data and provide me with a short visual transcript. "
+            "Not more than 20 words:\n" + image_base64
+        )}
     ]
 
     # Step 3: Call OpenAI API
@@ -84,4 +81,3 @@ def analyze_image_gpt4_resized(frame, prompt):
         )
 
     return response.json()
-
