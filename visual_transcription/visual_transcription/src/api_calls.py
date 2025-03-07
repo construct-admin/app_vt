@@ -60,6 +60,7 @@ def analyze_image_gpt4_resized(frame, prompt):
     }
     payload = {
         "model": "gpt-4",
+        "supports_image": True,
         "messages": messages,
         "max_tokens": 1000,
         "temperature": 0.7
