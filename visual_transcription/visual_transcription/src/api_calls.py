@@ -41,7 +41,7 @@ def analyze_image_gpt4_resized(frame, prompt):
 
     # Step 2: Prepare the conversation
     messages = [
-        {"role":"system", "content": system_prompt}
+        {"role":"system", "content": system_prompt},
         {"role": "user", "content": prompt},
         {
             "role": "user",
