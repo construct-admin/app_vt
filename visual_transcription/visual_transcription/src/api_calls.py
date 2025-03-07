@@ -46,7 +46,7 @@ def analyze_image_gpt4_resized(frame, prompt):
         {
             "role": "user",
             "content": (
-                "Please analyze this compressed image data (base64-encoded) and provide me with a short visual transcript. Not more than 20 words:\n"
+                "Please analyze this compressed image data and provide me with a short visual transcript. Not more than 20 words:\n"
                 f"{image_base64}"
             )
         }
